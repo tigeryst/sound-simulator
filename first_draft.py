@@ -1,6 +1,7 @@
 import math
 
 
+# ! Add docstrings to classes to incorporate type information and show that you understand the physics.
 class Transducer:
     def __init__(self, x, y, t_array):
         self.x = x
@@ -20,6 +21,7 @@ class Emitter(Transducer):
 
     def generate_signal(self, f_c, n_cycles, amplitude):
         # Calculate the time step from the first two elements in t_array
+        # ! The assignment did not state that the time interval should be constant.
         dt = self.t_array[1] - self.t_array[0]
 
         # Generate a sinusoidal signal
@@ -45,6 +47,8 @@ class Emitter(Transducer):
 
 class SoundSimulator:
     def __init__(self, emitters=None, receivers=None, t_array=None, sos=1500.0):
+        # ! Very good. Never set a default value to a mutable object.
+        # ! Study falsy values in Python. None is falsy so you can write emitters or [].
         self.emitters = emitters if emitters is not None else []
         self.receivers = receivers if receivers is not None else []
         self.t_array = t_array if t_array is not None else []
