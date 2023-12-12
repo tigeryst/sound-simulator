@@ -55,27 +55,38 @@ class SoundSimulator:
         self.sos = sos
 
     def run(self):
+        # initialize a list for simulated receivers
         simulated_receivers = []
         for receiver in self.receivers:
             receiver_signal = [0.0] * len(self.t_array)
 
+            # loop through each receiver
             for emitter in self.emitters:
+                # find the time it takes for signal from emitter to reach receiver
                 distance = math.sqrt(
                     (receiver.x - emitter.x) ** 2 + (receiver.y - emitter.y) ** 2
                 )
                 time_delay = distance / self.sos
 
+                # loop through the time array
                 for i, t in enumerate(self.t_array):
+                    reduced_amp = 1 / distance
+                    # if t in t_array is > or = time delay, it means the signal from emitter has reached the receiver
+                    # if t is less than time delay, the signal has not reach receiver, so iterate to the next time array
                     if t >= time_delay:
-                        attenuation = 1 / distance
-                        receiver_signal[i] += (
-                            emitter.signal[
-                                i
-                                - int(time_delay / (self.t_array[1] - self.t_array[0]))
-                            ]
-                            * attenuation
+                        # calculated the time delay in terms of array index
+                        # ! This can be defined outside the loop.
+                        delay_index = int(
+                            time_delay / self.t_array[1] - self.t_array[0]
                         )
-
+                        # Calculate the adjusted index to account for the time delay in the signal propagation
+                        #! Avoid declaring unnecessary variables unless it improves readability.
+                        adjusted_index = i - delay_index
+                        receiver_signal[i] += (
+                            emitter.signal[adjusted_index] * reduced_amp
+                        )
+            #! Inefficiency as a new Receiver object is created for each receiver.
+            #! Better to modify the existing receiver objects by accessing them through self.receivers.
             simulated_receiver = Receiver(receiver.x, receiver.y, self.t_array)
             simulated_receiver.signal = receiver_signal
             simulated_receivers.append(simulated_receiver)
