@@ -1,6 +1,12 @@
 # %%
 from matplotlib import pyplot
 from simulator import *
+import time
+
+start_time = time.time()
+beam_former.generate_field()
+end_time = time.time()
+print(end_time - start_time)
 
 
 # %%
